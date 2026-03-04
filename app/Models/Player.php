@@ -4,12 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Players extends Model
+class Player extends Model
 {
     use HasFactory;
-    use HasRoles;
 
     protected $fillable = [
         'full_name',
@@ -18,5 +17,9 @@ class Players extends Model
         'identification_number',
         'email',
     ];
-}
 
+    public function notes(): BelongsToMany
+    {
+        return $this->belongsToMany(Note::class, 'note_player', 'player_id', 'note_id');
+    }
+}

@@ -2,16 +2,21 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Note;
+use App\Models\Player;
 use Illuminate\Database\Seeder;
 
 class NotesPlayerSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
+        $players = Player::all();
+        $notes = Note::all();
+
+        $players->each(function (Player $player) use ($notes): void {
+            $player->notes()->syncWithoutDetaching(
+                $notes->random(min(2, $notes->count()))->pluck('id')
+            );
+        });
     }
 }

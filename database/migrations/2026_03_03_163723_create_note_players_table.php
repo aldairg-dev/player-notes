@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('note_player', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('player_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('player_id')->constrained('players')->onDelete('cascade');
             $table->foreignId('note_id')->constrained('notes')->onDelete('cascade');
             $table->timestamps();
         });
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notes_players');
+        Schema::dropIfExists('note_player');
     }
 };

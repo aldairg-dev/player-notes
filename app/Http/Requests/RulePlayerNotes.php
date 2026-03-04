@@ -18,7 +18,18 @@ class RulePlayerNotes extends FormRequest
     {
         return [
             'noteContent' => ['required', 'string', 'max:1000'],
-            'playerId' => ['required', 'integer', 'exists:players,id'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'noteContent.required' => 'El contenido de la nota es obligatorio.',
+            'noteContent.max'      => 'La nota no debe exceder los 1000 caracteres.',
+            'playerId.exists'      => 'El jugador seleccionado no existe.',
         ];
     }
 }

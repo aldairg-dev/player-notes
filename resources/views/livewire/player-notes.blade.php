@@ -3,7 +3,6 @@
     <div class="flex items-center justify-between mb-8">
         <div>
             <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Notas de Jugadores</h2>
-            <p class="mt-1 text-sm text-gray-500">Administra jugadores y sus notas en un solo lugar.</p>
         </div>
         <button wire:click="openAddPlayerModal"
             class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors duration-150">

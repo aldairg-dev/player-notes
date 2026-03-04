@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Http\Requests\RuleCreatePlayer;
+use App\Http\Requests\RulePlayerNotes;
 use App\Service\PlayerNoteServices;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -24,30 +26,6 @@ class PlayerNotes extends Component
     public string $newPlayerEmail = '';
     public string $newPlayerTypeId = '';
     public string $newPlayerIdNumber = '';
-
-    protected array $rules = [
-        'noteContent'         => 'required|string|max:1000',
-        'newPlayerFullName'   => 'required|string|max:200',
-        'newPlayerUsername'   => 'required|string|max:50|unique:players,username',
-        'newPlayerEmail'      => 'required|email|max:255|unique:players,email',
-        'newPlayerTypeId'     => 'required|string|max:50',
-        'newPlayerIdNumber'   => 'required|string|max:50|unique:players,identification_number',
-    ];
-
-    protected array $messages = [
-        'noteContent.required'         => 'El contenido de la nota es obligatorio.',
-        'noteContent.max'              => 'La nota no debe exceder los 1000 caracteres.',
-        'newPlayerFullName.required'   => 'El nombre completo es obligatorio.',
-        'newPlayerUsername.required'   => 'El nombre de usuario es obligatorio.',
-        'newPlayerUsername.unique'     => 'Este nombre de usuario ya está en uso.',
-        'newPlayerEmail.required'      => 'El correo electrónico es obligatorio.',
-        'newPlayerEmail.email'         => 'Ingresa un correo electrónico válido.',
-        'newPlayerEmail.unique'        => 'Este correo electrónico ya está registrado.',
-        'newPlayerTypeId.required'     => 'El tipo de identificación es obligatorio.',
-        'newPlayerIdNumber.required'   => 'El número de identificación es obligatorio.',
-        'newPlayerIdNumber.unique'     => 'Este número de identificación ya está registrado.',
-    ];
-
 
     public function openNotes(int $playerId): void
     {
@@ -79,7 +57,8 @@ class PlayerNotes extends Component
 
     public function saveNote(PlayerNoteServices $service): void
     {
-        $this->validateOnly('noteContent');
+        $noteRequest = new RulePlayerNotes();
+        $this->validateOnly('noteContent', $noteRequest->rules(), $noteRequest->messages());
 
         $service->addNoteToPlayer(
             $this->selectedPlayerId,
@@ -96,7 +75,8 @@ class PlayerNotes extends Component
 
     public function confirmSaveNote(): void
     {
-        $this->validateOnly('noteContent');
+        $noteRequest = new RulePlayerNotes();
+        $this->validateOnly('noteContent', $noteRequest->rules(), $noteRequest->messages());
         $this->dispatch('swal:confirm-save-note');
     }
 
@@ -121,13 +101,8 @@ class PlayerNotes extends Component
 
     public function savePlayer(PlayerNoteServices $service): void
     {
-        $this->validate([
-            'newPlayerFullName' => $this->rules['newPlayerFullName'],
-            'newPlayerUsername' => $this->rules['newPlayerUsername'],
-            'newPlayerEmail' => $this->rules['newPlayerEmail'],
-            'newPlayerTypeId' => $this->rules['newPlayerTypeId'],
-            'newPlayerIdNumber' => $this->rules['newPlayerIdNumber'],
-        ]);
+        $playerRequest = new RuleCreatePlayer();
+        $this->validate($playerRequest->rules(), $playerRequest->messages());
 
         $service->createPlayer([
             'full_name' => $this->newPlayerFullName,
@@ -146,13 +121,8 @@ class PlayerNotes extends Component
 
     public function confirmSavePlayer(): void
     {
-        $this->validate([
-            'newPlayerFullName' => $this->rules['newPlayerFullName'],
-            'newPlayerUsername' => $this->rules['newPlayerUsername'],
-            'newPlayerEmail'    => $this->rules['newPlayerEmail'],
-            'newPlayerTypeId'   => $this->rules['newPlayerTypeId'],
-            'newPlayerIdNumber' => $this->rules['newPlayerIdNumber'],
-        ]);
+        $playerRequest = new RuleCreatePlayer();
+        $this->validate($playerRequest->rules(), $playerRequest->messages());
         $this->dispatch('swal:confirm-save-player');
     }
 

@@ -14,7 +14,7 @@ class NotesSeeder extends Seeder
         $user = User::factory()->create([
             'name' => 'Support Agent',
             'email' => 'agent@example.com',
-        ]);
+        ])->assignRole('support-agent');
 
         $players = Player::all();
 

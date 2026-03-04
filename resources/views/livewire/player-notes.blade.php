@@ -4,6 +4,7 @@
         <div>
             <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Notas de Jugadores</h2>
         </div>
+        @can('add player notes')
         <button wire:click="openAddPlayerModal"
             class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors duration-150">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -13,6 +14,7 @@
             </svg>
             Agregar Jugador
         </button>
+        @endcan
     </div>
 
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-xl overflow-hidden">
@@ -59,6 +61,7 @@
                     </td>
                     <td class="px-4 py-4 whitespace-nowrap text-right pr-6">
                         <div class="flex items-center justify-end gap-2">
+                            @can('view player notes')
                             <button wire:click="openNotes({{ $player->id }})"
                                 class="inline-flex items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-colors duration-100"
                                 title="Ver Notas">
@@ -71,6 +74,8 @@
                                 </svg>
                                 Ver
                             </button>
+                            @endcan
+                            @can('add player notes')
                             <button wire:click="openAddNote({{ $player->id }})"
                                 class="inline-flex items-center gap-1.5 rounded-md bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 shadow-sm ring-1 ring-inset ring-indigo-700/10 hover:bg-indigo-100 transition-colors duration-100"
                                 title="Agregar Comentario">
@@ -82,6 +87,7 @@
                                 </svg>
                                 Agregar Comentario
                             </button>
+                            @endcan
                         </div>
                     </td>
                 </tr>
@@ -103,6 +109,7 @@
     </div>
 
 
+    @can('view player notes')
     @if ($showModal && $selectedPlayerId)
     <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 text-center sm:p-0">
@@ -178,6 +185,7 @@
                         class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 bg-white ring-1 ring-inset ring-gray-300 shadow-sm hover:bg-gray-50 transition-colors">
                         Cerrar
                     </button>
+                    @can('add player notes')
                     <button wire:click="openAddNote({{ $player->id }})"
                         class="inline-flex items-center gap-1.5 rounded-md bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 shadow-sm ring-1 ring-inset ring-indigo-700/10 hover:bg-indigo-100 transition-colors duration-100"
                         title="Agregar Comentario">
@@ -189,13 +197,16 @@
                         </svg>
                         Agregar Comentario
                     </button>
+                    @endcan
                 </div>
             </div>
         </div>
     </div>
     @endif
+    @endcan
 
 
+    @can('add player notes')
     @if ($showAddNoteModal && $selectedPlayerId)
     <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="add-note-title" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 text-center sm:p-0">
@@ -247,8 +258,10 @@
         </div>
     </div>
     @endif
+    @endcan
 
 
+    @can('add player notes')
     @if ($showAddPlayerModal)
     <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="add-player-title" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 text-center sm:p-0">
@@ -351,6 +364,7 @@
         </div>
     </div>
     @endif
+    @endcan
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>

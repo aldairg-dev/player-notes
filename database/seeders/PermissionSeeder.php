@@ -14,6 +14,9 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'view player notes']);
 
         $agentRole = Role::create(['name' => 'support-agent']);
+        $guestRole = Role::create(['name' => 'guest']);
+
         $agentRole->givePermissionTo(['add player notes', 'view player notes']);
+        $guestRole->givePermissionTo(['view player notes']);
     }
 }

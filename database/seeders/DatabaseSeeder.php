@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,5 +14,10 @@ class DatabaseSeeder extends Seeder
             PlayersSeeder::class,
             NotesSeeder::class,
         ]);
+
+        User::factory(1)->create([
+            'name' => 'Aldair Gutierrez',
+            'email' => 'aldair@example.com',
+        ])->assignRole('guest');
     }
 }

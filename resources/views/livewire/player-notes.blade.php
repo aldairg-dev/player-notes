@@ -5,7 +5,7 @@
             <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Notas de Jugadores</h2>
         </div>
         @can('add player notes')
-        <button wire:click="openAddPlayerModal"
+        <button wire:click="openAddPlayerModal(false)"
             class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors duration-150">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
@@ -61,6 +61,20 @@
                     </td>
                     <td class="px-4 py-4 whitespace-nowrap text-right pr-6">
                         <div class="flex items-center justify-end gap-2">
+                            {{-- @can('update info player')
+                            <button wire:click="openAddPlayerModal(true, {{ $player}})"
+                                class="inline-flex items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-colors duration-100"
+                                title="Ver Notas">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                    <path fill-rule="evenodd"
+                                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Editar Jugador
+                            </button>
+                            @endcan --}}
                             @can('view player notes')
                             <button wire:click="openNotes({{ $player->id }})"
                                 class="inline-flex items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-colors duration-100"
@@ -180,13 +194,13 @@
                     @endforelse
                 </div>
 
-                <div class="flex justify-end px-6 py-3 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl">
+                <div class="flex justify-end px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl">
                     <button wire:click="closeNotes" type="button"
                         class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 bg-white ring-1 ring-inset ring-gray-300 shadow-sm hover:bg-gray-50 transition-colors">
                         Cerrar
                     </button>
                     @can('add player notes')
-                    <button wire:click="openAddNote({{ $player->id }})"
+                    <button wire:click="openAddNote({{ $selectedPlayerId }})"
                         class="inline-flex items-center gap-1.5 rounded-md bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 shadow-sm ring-1 ring-inset ring-indigo-700/10 hover:bg-indigo-100 transition-colors duration-100"
                         title="Agregar Comentario">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20"
@@ -234,7 +248,7 @@
                     <div class="px-6 py-5">
                         <label for="noteContent"
                             class="block text-sm font-medium text-gray-700 mb-1.5">Comentario</label>
-                        <textarea wire:model.defer="noteContent" id="noteContent" rows="4" maxlength="1000"
+                        <textarea wire:model.defer="noteContent" id="noteContent" rows="4" maxlength="1002"
                             class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400 resize-none"
                             placeholder="Escribe tu comentario aquí..."></textarea>
                         @error('noteContent')
@@ -272,8 +286,9 @@
                 class="relative inline-block w-full max-w-lg my-8 text-left align-middle bg-white rounded-2xl shadow-2xl transform transition-all">
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900" id="add-player-title">Agregar Jugador</h3>
-                        <p class="text-xs text-gray-500 mt-0.5">Registra un nuevo jugador en el sistema</p>
+                        <h3 class="text-lg font-semibold text-gray-900" id="add-player-title">@if($isEditMode) Editar
+                            Jugador @else Agregar Jugador @endif</h3>
+                        {{-- <p class="text-xs text-gray-500 mt-0.5">Registra un nuevo jugador en el sistema</p> --}}
                     </div>
                     <button wire:click="closeAddPlayerModal"
                         class="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors">
@@ -288,61 +303,61 @@
                 <form wire:submit.prevent="confirmSavePlayer">
                     <div class="px-6 py-5 space-y-4">
                         <div>
-                            <label for="newPlayerFullName" class="block text-sm font-medium text-gray-700 mb-1">Nombre
+                            <label for="playerFullName" class="block text-sm font-medium text-gray-700 mb-1">Nombre
                                 Completo</label>
-                            <input type="text" wire:model.defer="newPlayerFullName" id="newPlayerFullName"
+                            <input type="text" wire:model.defer="playerFullName" id="playerFullName"
                                 class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 placeholder="Juan Pérez">
-                            @error('newPlayerFullName')
+                            @error('playerFullName')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="newPlayerUsername"
+                            <label for="playerUsername"
                                 class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
-                            <input type="text" wire:model.defer="newPlayerUsername" id="newPlayerUsername"
+                            <input type="text" wire:model.defer="playerUsername" id="playerUsername"
                                 class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 placeholder="juanperez">
-                            @error('newPlayerUsername')
+                            @error('playerUsername')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="newPlayerEmail" class="block text-sm font-medium text-gray-700 mb-1">Correo
+                            <label for="playerEmail" class="block text-sm font-medium text-gray-700 mb-1">Correo
                                 Electrónico</label>
-                            <input type="email" wire:model.defer="newPlayerEmail" id="newPlayerEmail"
+                            <input type="email" wire:model.defer="playerEmail" id="playerEmail"
                                 class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 placeholder="juan@ejemplo.com">
-                            @error('newPlayerEmail')
+                            @error('playerEmail')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label for="newPlayerTypeId" class="block text-sm font-medium text-gray-700 mb-1">Tipo
+                                <label for="playerTypeId" class="block text-sm font-medium text-gray-700 mb-1">Tipo
                                     de ID</label>
-                                <select wire:model.defer="newPlayerTypeId" id="newPlayerTypeId"
+                                <select wire:model.defer="playerTypeId" id="playerTypeId"
                                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                     <option value="">Seleccionar...</option>
+                                    <option value="CC">Cédula Ciudadana</option>
                                     <option value="DNI">DNI</option>
                                     <option value="Passport">Pasaporte</option>
                                     <option value="License">Licencia</option>
                                 </select>
-                                @error('newPlayerTypeId')
+                                @error('playerTypeId')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                             <div>
-                                <label for="newPlayerIdNumber"
-                                    class="block text-sm font-medium text-gray-700 mb-1">Número
+                                <label for="playerIdNumber" class="block text-sm font-medium text-gray-700 mb-1">Número
                                     de Identificación</label>
-                                <input type="text" wire:model.defer="newPlayerIdNumber" id="newPlayerIdNumber"
+                                <input type="text" wire:model.defer="playerIdNumber" id="playerIdNumber"
                                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="12345678">
-                                @error('newPlayerIdNumber')
+                                @error('playerIdNumber')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -356,7 +371,7 @@
                         </button>
                         <button type="submit"
                             class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors">
-                            Guardar Jugador
+                            @if($isEditMode) Actualizar Jugador @else Agregar Jugador @endif
                         </button>
                     </div>
                 </form>

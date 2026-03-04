@@ -32,4 +32,9 @@ class PlayerNoteServices
     {
         return $this->playerRepository->createPlayer($data);
     }
+
+    public function updatePlayer(int $playerId, array $data): Player
+    {
+        return $this->playerRepository->updatePlayer($playerId, $data);
+    }
 }

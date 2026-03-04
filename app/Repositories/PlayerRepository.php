@@ -20,7 +20,7 @@ class PlayerRepository implements PlayerRepositoryInterface
         return Player::findOrFail($playerId)
             ->notes()
             ->with('author')
-            ->latest()
+            ->orderByDesc('notes.created_at')
             ->get();
     }
 
@@ -44,5 +44,13 @@ class PlayerRepository implements PlayerRepositoryInterface
     public function createPlayer(array $data): Player
     {
         return Player::create($data);
+    }
+
+    public function updatePlayer(int $playerId, array $data): Player
+    {
+        $player = Player::findOrFail($playerId);
+        $player->update($data);
+
+        return $player;
     }
 }

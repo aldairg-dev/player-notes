@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Http\Requests\RuleCreatePlayer;
 use App\Http\Requests\RulePlayerNotes;
+use App\Models\Player;
 use App\Service\PlayerNoteServices;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -21,11 +22,12 @@ class PlayerNotes extends Component
     public string $noteContent = '';
 
     public bool $showAddPlayerModal = false;
-    public string $newPlayerFullName = '';
-    public string $newPlayerUsername = '';
-    public string $newPlayerEmail = '';
-    public string $newPlayerTypeId = '';
-    public string $newPlayerIdNumber = '';
+    public string $playerFullName = '';
+    public string $playerUsername = '';
+    public string $playerEmail = '';
+    public string $playerTypeId = '';
+    public string $playerIdNumber = '';
+    public bool $isEditMode = false;
 
     public function openNotes(int $playerId): void
     {
@@ -86,16 +88,33 @@ class PlayerNotes extends Component
         $this->saveNote($service);
     }
 
-    public function openAddPlayerModal(): void
+    public function openAddPlayerModal(bool $reset, Player $player): void
     {
-        $this->reset(['newPlayerFullName', 'newPlayerUsername', 'newPlayerEmail', 'newPlayerTypeId', 'newPlayerIdNumber']);
+        $this->reset(['playerFullName', 'playerUsername', 'playerEmail', 'playerTypeId', 'playerIdNumber']);
         $this->showAddPlayerModal = true;
+        if ($reset) {
+            $this->isEditMode = true;
+            $this->openEditPlayerModal($player);
+        } else {
+            $this->isEditMode = false;
+        }
+    }
+
+    public function openEditPlayerModal(Player $player): void
+    {
+        if ($player) {
+            $this->playerFullName = $player->full_name;
+            $this->playerUsername = $player->username;
+            $this->playerEmail = $player->email;
+            $this->playerTypeId = $player->type_identification;
+            $this->playerIdNumber = $player->identification_number;
+        }
     }
 
     public function closeAddPlayerModal(): void
     {
         $this->showAddPlayerModal = false;
-        $this->reset(['newPlayerFullName', 'newPlayerUsername', 'newPlayerEmail', 'newPlayerTypeId', 'newPlayerIdNumber']);
+        $this->reset(['playerFullName', 'playerUsername', 'playerEmail', 'playerTypeId', 'playerIdNumber']);
         $this->resetValidation();
     }
 
@@ -105,11 +124,11 @@ class PlayerNotes extends Component
         $this->validate($playerRequest->rules(), $playerRequest->messages());
 
         $service->createPlayer([
-            'full_name' => $this->newPlayerFullName,
-            'username' => $this->newPlayerUsername,
-            'email' => $this->newPlayerEmail,
-            'type_identification' => $this->newPlayerTypeId,
-            'identification_number' => $this->newPlayerIdNumber,
+            'full_name' => $this->playerFullName,
+            'username' => $this->playerUsername,
+            'email' => $this->playerEmail,
+            'type_identification' => $this->playerTypeId,
+            'identification_number' => $this->playerIdNumber,
         ]);
 
         $this->closeAddPlayerModal();
@@ -130,6 +149,27 @@ class PlayerNotes extends Component
     public function handleConfirmedSavePlayer(PlayerNoteServices $service): void
     {
         $this->savePlayer($service);
+    }
+
+
+    public function updatePlayer(int $playerId, PlayerNoteServices $service): void
+    {
+        $playerRequest = new RuleCreatePlayer();
+        $this->validate($playerRequest->rules(), $playerRequest->messages());
+
+        $service->updatePlayer($playerId, [
+            'full_name' => $this->playerFullName,
+            'username' => $this->playerUsername,
+            'email' => $this->playerEmail,
+            'type_identification' => $this->playerTypeId,
+            'identification_number' => $this->playerIdNumber,
+        ]);
+
+        $this->closeAddPlayerModal();
+        $this->dispatch('swal:success', [
+            'title' => '¡Jugador actualizado!',
+            'text'  => 'Los datos del jugador se actualizaron correctamente.',
+        ]);
     }
 
 

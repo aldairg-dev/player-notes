@@ -15,9 +15,15 @@ class DatabaseSeeder extends Seeder
             NotesSeeder::class,
         ]);
 
-        User::factory(1)->create([
+        User::factory()->create([
             'name' => 'Aldair Gutierrez',
             'email' => 'aldair@example.com',
         ])->assignRole('guest');
+
+
+        User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+        ])->assignRole('super-admin');
     }
 }

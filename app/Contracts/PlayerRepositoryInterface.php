@@ -15,4 +15,6 @@ interface PlayerRepositoryInterface
     public function addNote(int $playerId, int $authorId, string $content): Note;
 
     public function createPlayer(array $data): Player;
+
+    public function updatePlayer(int $playerId, array $data): Player;
 }

@@ -20,6 +20,6 @@ class Player extends Model
 
     public function notes(): BelongsToMany
     {
-        return $this->belongsToMany(Note::class, 'note_player', 'player_id', 'note_id');
+        return $this->belongsToMany(Note::class, 'note_player', 'player_id', 'note_id')->with('author')->latest('notes.created_at');
     }
 }

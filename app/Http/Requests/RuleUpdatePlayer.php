@@ -4,30 +4,32 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RuleCreatePlayer extends FormRequest
+class RuleUpdatePlayer extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
     public function authorize(): bool
     {
-        return $this->user()?->can('create player') ?? false;
+        return $this->user()?->can('update player') ?? false;
     }
 
     /**
+     * Get the validation rules that apply to the request.
+     *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'playerFullName' => ['required', 'string', 'max:200'],
-            'playerUsername' => ['required', 'string', 'max:50', 'unique:players,username'],
-            'playerEmail' => ['required', 'email', 'max:255', 'unique:players,email'],
-            'playerTypeId' => ['required', 'string', 'max:50'],
-            'playerIdNumber' => ['required', 'string', 'max:50', 'unique:players,identification_number'],
+            'playerFullName' => 'required|string|max:255',
+            'playerUsername' => 'required|string|max:255|unique:players,username,' . $this->player->id,
+            'playerEmail' => 'required|email|unique:players,email,' . $this->player->id,
+            'playerTypeId' => 'required|exists:player_types,id',
+            'playerIdNumber' => 'required|string|unique:players,id_number,' . $this->player->id,
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [
@@ -39,7 +41,6 @@ class RuleCreatePlayer extends FormRequest
             'playerEmail.unique' => 'Este correo electrónico ya está registrado.',
             'playerTypeId.required'  => 'El tipo de identificación es obligatorio.',
             'playerIdNumber.required' => 'El número de identificación es obligatorio.',
-            'playerIdNumber.unique' => 'Este número de identificación ya está registrado.',
         ];
     }
 }

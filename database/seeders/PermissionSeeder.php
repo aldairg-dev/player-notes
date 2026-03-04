@@ -12,7 +12,9 @@ class PermissionSeeder extends Seeder
     {
         Permission::create(['name' => 'add player notes']);
         Permission::create(['name' => 'view player notes']);
+        Permission::create(['name' => 'update info player']);
 
+        Role::firstOrCreate(['name' => 'super-admin']);
         $agentRole = Role::create(['name' => 'support-agent']);
         $guestRole = Role::create(['name' => 'guest']);
 
